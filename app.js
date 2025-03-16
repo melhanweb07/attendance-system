@@ -409,15 +409,21 @@ function displaySearchResults(records, startDate, endDate, subject) {
     resultsDiv.appendChild(percentageTitle);
     resultsDiv.appendChild(percentageTable);
 
+    // Store the data in window object for export
+    window.exportData = {
+        records: records,
+        studentStats: Object.values(studentStats)
+    };
+
     // Add export buttons
     const exportBtnsContainer = document.createElement('div');
     exportBtnsContainer.className = 'export-buttons';
     exportBtnsContainer.style.marginTop = '20px';
     exportBtnsContainer.innerHTML = `
-        <button class="btn primary export-btn" onclick="exportSearchResults(${JSON.stringify(records)}, '${startDate}', '${endDate}', '${subject}')">
+        <button class="btn primary export-btn" onclick="exportSearchResults(window.exportData.records, '${startDate}', '${endDate}', '${subject}')">
             📥 Export Detailed Records
         </button>
-        <button class="btn primary export-btn" onclick="exportPercentageSummary(${JSON.stringify(Object.values(studentStats))}, '${subject}')">
+        <button class="btn primary export-btn" onclick="exportPercentageSummary(window.exportData.studentStats, '${subject}')">
             📊 Export Percentage Summary
         </button>
     `;
@@ -460,48 +466,70 @@ function calculateStudentAttendance(records, startDate, endDate) {
 }
 
 function exportSearchResults(records, startDate, endDate, subject) {
-    const csvContent = "data:text/csv;charset=utf-8," + 
-        "Date,Student ID,Name,Status,Period\n" +
-        records.map(record => [
-            new Date(record.date).toLocaleDateString(),
-            record.id,
-            record.name,
-            record.status,
-            record.period
-        ].join(",")).join("\n");
+    try {
+        // Sanitize the data and create CSV content
+        const rows = records.map(record => ({
+            date: new Date(record.date).toLocaleDateString(),
+            id: record.id,
+            name: record.name.replace(/,/g, ' '), // Replace commas in names
+            status: record.status,
+            period: record.period
+        }));
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `attendance_${subject}_${startDate}_${endDate}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('Records exported successfully 📊');
+        const csvContent = [
+            "Date,Student ID,Name,Status,Period",
+            ...rows.map(row => `${row.date},${row.id},"${row.name}",${row.status},${row.period}`)
+        ].join('\n');
+
+        // Create and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `attendance_${subject}_${startDate}_${endDate}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        showToast('Records exported successfully 📊');
+    } catch (error) {
+        console.error('Export error:', error);
+        showToast('Error exporting records. Please try again ❌');
+    }
 }
 
 function exportPercentageSummary(studentStats, subject) {
-    const csvContent = "data:text/csv;charset=utf-8," + 
-        "Student ID,Name,Total Classes,Present,Absent,Attendance Percentage\n" +
-        studentStats.map(student => [
-            student.id,
-            student.name,
-            student.totalClasses,
-            student.present,
-            student.absent,
-            student.percentage + '%'
-        ].join(",")).join("\n");
+    try {
+        // Sanitize the data and create CSV content
+        const rows = studentStats.map(student => ({
+            id: student.id,
+            name: student.name.replace(/,/g, ' '), // Replace commas in names
+            totalClasses: student.totalClasses,
+            present: student.present,
+            absent: student.absent,
+            percentage: student.percentage
+        }));
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `attendance_percentage_${subject}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('Percentage summary exported successfully 📊');
+        const csvContent = [
+            "Student ID,Name,Total Classes,Present,Absent,Attendance Percentage",
+            ...rows.map(row => `${row.id},"${row.name}",${row.totalClasses},${row.present},${row.absent},${row.percentage}%`)
+        ].join('\n');
+
+        // Create and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `attendance_percentage_${subject}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        showToast('Percentage summary exported successfully 📊');
+    } catch (error) {
+        console.error('Export error:', error);
+        showToast('Error exporting percentage summary. Please try again ❌');
+    }
 }
 
 function showToast(message) {
