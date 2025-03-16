@@ -13,12 +13,35 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <h2><i class="fas fa-user-lock"></i> Login</h2>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password">
+                <small class="error-message" id="errorMessage"></small>
+            </div>
+            <button class="btn primary" onclick="checkPassword()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content (will be hidden until login) -->
+    <div class="container" id="mainContent" style="display: none;">
         <header>
-            <h1>Class Attendance System</h1>
-            <div class="current-info">
-                <span id="current-time"></span>
-                <span id="current-period"></span>
+            <div class="header-left">
+                <h1>Class Attendance System</h1>
+            </div>
+            <div class="header-right">
+                <div class="current-info">
+                    <span id="current-time"></span>
+                    <span id="current-period"></span>
+                </div>
+                <button class="btn logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </header>
 
@@ -68,6 +91,56 @@
             <!-- Absence report will be displayed here -->
         </div>
     </div>
+    <script>
+        // Login functionality
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loginOverlay = document.getElementById('loginOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            if (password === 'melhan@tech') {
+                // Hide login, show content
+                loginOverlay.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                // Show welcome message
+                showToast('Welcome to Attendance System 👋');
+                
+                // Clear password field
+                document.getElementById('password').value = '';
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // Logout functionality
+        function logout() {
+            const loginOverlay = document.getElementById('loginOverlay');
+            const mainContent = document.getElementById('mainContent');
+            
+            // Show login, hide content
+            loginOverlay.style.display = 'flex';
+            mainContent.style.display = 'none';
+            
+            // Clear any error messages
+            document.getElementById('errorMessage').textContent = '';
+            
+            // Show logout message
+            showToast('Logged out successfully 👋');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add enter key support for login
+            document.getElementById('password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+        });
+    </script>
     <script src="app.js"></script>
 </body>
 </html> 
