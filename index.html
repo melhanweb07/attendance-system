@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <title>Class Attendance System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Class Attendance System</h1>
+            <div class="current-info">
+                <span id="current-time"></span>
+                <span id="current-period"></span>
+            </div>
+        </header>
+
+        <div class="attendance-form">
+            <div class="form-group">
+                <label for="attendance-date">Date:</label>
+                <input type="date" id="attendance-date">
+            </div>
+            <div class="form-group">
+                <label for="subject-name">Subject:</label>
+                <input type="text" id="subject-name" placeholder="Enter subject name">
+            </div>
+            <div class="controls">
+                <button id="mark-all" class="btn"><i class="fas fa-check-double"></i> Mark All Present</button>
+                <button id="unmark-all" class="btn"><i class="fas fa-times"></i> Mark All Absent</button>
+                <button id="submit-attendance" class="btn primary"><i class="fas fa-save"></i> Submit Attendance</button>
+            </div>
+        </div>
+
+        <div class="students-grid" id="students-list">
+            <!-- Student cards will be added here dynamically -->
+        </div>
+
+        <div class="search-section">
+            <h2>Search Attendance Records</h2>
+            <div class="search-form">
+                <div class="form-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date">
+                </div>
+                <div class="form-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date">
+                </div>
+                <div class="form-group">
+                    <label for="search-subject">Subject:</label>
+                    <input type="text" id="search-subject" placeholder="Enter subject name">
+                </div>
+                <button id="search-attendance" class="btn primary">
+                    <i class="fas fa-search"></i> Search Records
+                </button>
+            </div>
+            <div id="attendance-results"></div>
+        </div>
+
+        <div id="absence-list" class="absence-report">
+            <!-- Absence report will be displayed here -->
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 
