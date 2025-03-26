@@ -20,7 +20,7 @@ const students = [
     { id: "23919", name: "Md Talha C", present: true, image: "https://public.readdy.ai/ai/img_res/90b98d2998d8d615d9b16899951c3a03.jpg" },
     { id: "23920", name: "Md Talha V", present: true, image: "https://public.readdy.ai/ai/img_res/029d61079213ac51ab845ec28a1c0ce2.jpg" },
     { id: "23921", name: "Mohamed Harris H", present: true, image: "https://public.readdy.ai/ai/img_res/11780176a02d664c8bfef87ef49152ad.jpg" },
-    { id: "23022", name: "Mohamed Melhan K O", present: false, image: "https://public.readdy.ai/ai/img_res/d64d0b42a4b5209c70b4383fd1364d4d.jpg" },
+    { id: "23922", name: "Mohamed Melhan K O", present: false, image: "https://public.readdy.ai/ai/img_res/d64d0b42a4b5209c70b4383fd1364d4d.jpg" },
     { id: "23923", name: "Mohamed Naveed V", present: true, image: "https://public.readdy.ai/ai/img_res/406ee7c4b83b9c0feffa674d2971885a.jpg" },
     { id: "23925", name: "Mohamed Aqlath A", present: true, image: "https://public.readdy.ai/ai/img_res/44aeab63f46c268ab62adc44d796386d.jpg" },
     { id: "23926", name: "Mohamed Azhar sayeed A S", present: false, image: "https://public.readdy.ai/ai/img_res/b95950837d18bc3eb76c16da5c2bd829.jpg" },
@@ -313,7 +313,8 @@ function initializeSearchFunctionality() {
             
             const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAttendance&startDate=${startDate}&endDate=${endDate}&subject=${subject}`);
             const data = await response.json();
-
+            console.log(data);
+            
             if (data.success) {
                 displaySearchResults(data.records, startDate, endDate, subject);
             } else {
@@ -330,12 +331,39 @@ function displaySearchResults(records, startDate, endDate, subject) {
     const resultsDiv = document.getElementById('attendance-results');
     resultsDiv.innerHTML = '';
 
+    // Group records by period
+    const periodStats = {};
+    records.forEach(record => {
+        if (!periodStats[record.period]) {
+            periodStats[record.period] = {
+                totalClasses: 0,
+                present: 0,
+                absent: 0
+            };
+        }
+        periodStats[record.period].totalClasses += 1;
+        if (record.status === 'Absent') {
+            periodStats[record.period].absent += 1;
+        } else {
+            periodStats[record.period].present += 1;
+        }
+    });
+
     const summary = document.createElement('div');
     summary.className = 'search-summary';
     summary.innerHTML = `
         <h3>Attendance Records</h3>
         <p>Subject: ${subject}</p>
-        <p>Period: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
+        <p>Date Range: ${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}</p>
+        <div class="period-summary">
+            <h4>Period-wise Summary</h4>
+            ${Object.entries(periodStats).map(([period, stats]) => `
+                <div class="period-stats">
+                    <p><strong>${period}:</strong> Total Classes: ${stats.totalClasses} | 
+                    Present: ${stats.present} | Absent: ${stats.absent}</p>
+                </div>
+            `).join('')}
+        </div>
     `;
     resultsDiv.appendChild(summary);
 
@@ -412,7 +440,8 @@ function displaySearchResults(records, startDate, endDate, subject) {
     // Store the data in window object for export
     window.exportData = {
         records: records,
-        studentStats: Object.values(studentStats)
+        studentStats: Object.values(studentStats),
+        periodStats: periodStats
     };
 
     // Add export buttons
@@ -426,15 +455,17 @@ function displaySearchResults(records, startDate, endDate, subject) {
         <button class="btn primary export-btn" onclick="exportPercentageSummary(window.exportData.studentStats, '${subject}')">
             📊 Export Percentage Summary
         </button>
+        <button class="btn primary export-btn" onclick="exportPeriodSummary(window.exportData.periodStats, '${subject}')">
+            📈 Export Period-wise Summary
+        </button>
     `;
     resultsDiv.appendChild(exportBtnsContainer);
 }
 
 function calculateStudentAttendance(records, startDate, endDate) {
-    // Get total number of working days between start and end date
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    // First get the total unique class sessions
+    const uniqueClasses = new Set(records.map(record => `${record.date}_${record.period}`));
+    const totalClassSessions = uniqueClasses.size;
 
     // Initialize statistics for all students
     const studentStats = {};
@@ -442,24 +473,32 @@ function calculateStudentAttendance(records, startDate, endDate) {
         studentStats[student.id] = {
             id: student.id,
             name: student.name,
-            totalClasses: totalDays,
+            totalClasses: totalClassSessions,
+            present: totalClassSessions, // Initialize with total classes (we'll subtract absences)
             absent: 0,
-            present: totalDays, // Will subtract absences later
-            percentage: 100 // Will recalculate later
+            percentage: 100 // Start with 100% attendance
         };
     });
 
-    // Count absences for each student
+    // Count only absences for each student
     records.forEach(record => {
-        if (record.status === 'Absent' && studentStats[record.id]) {
-            studentStats[record.id].absent += 1;
-            studentStats[record.id].present -= 1;
+        if (studentStats[record.id] && record.status === 'Absent') {
+                studentStats[record.id].absent += 1;
+            studentStats[record.id].present -= 1; // Reduce present count for each absence
         }
     });
 
     // Calculate percentage for each student
     Object.values(studentStats).forEach(student => {
-        student.percentage = ((student.present / student.totalClasses) * 100).toFixed(2);
+        if (student.totalClasses > 0) {
+            // Calculate percentage with 2 decimal places
+            student.percentage = ((student.present / student.totalClasses) * 100).toFixed(2);
+            
+            // Ensure values are within valid ranges
+            student.percentage = Math.max(0, Math.min(100, parseFloat(student.percentage)));
+            student.present = Math.max(0, student.present);
+            student.absent = Math.min(student.totalClasses, student.absent);
+        }
     });
 
     return studentStats;
@@ -529,6 +568,36 @@ function exportPercentageSummary(studentStats, subject) {
     } catch (error) {
         console.error('Export error:', error);
         showToast('Error exporting percentage summary. Please try again ❌');
+    }
+}
+
+function exportPeriodSummary(periodStats, subject) {
+    try {
+        const rows = Object.entries(periodStats).map(([period, stats]) => ({
+            period: period,
+            totalClasses: stats.totalClasses,
+            present: stats.present,
+            absent: stats.absent
+        }));
+
+        const csvContent = [
+            "Period,Total Classes,Present,Absent",
+            ...rows.map(row => `${row.period},${row.totalClasses},${row.present},${row.absent}`)
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `attendance_period_summary_${subject}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        showToast('Period summary exported successfully 📊');
+    } catch (error) {
+        console.error('Export error:', error);
+        showToast('Error exporting period summary. Please try again ❌');
     }
 }
 
