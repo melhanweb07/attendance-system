@@ -26,6 +26,7 @@ header {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    animation: slideDown 0.5s ease;
 }
 
 header h1 {
@@ -49,10 +50,12 @@ header h1 {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     margin-bottom: 15px;
+    animation: fadeInUp 0.6s ease 0.2s both;
 }
 
 .form-group {
     margin-bottom: 12px;
+    animation: fadeInUp 0.6s ease 0.4s both;
 }
 
 .form-group label {
@@ -77,6 +80,7 @@ header h1 {
     flex-direction: column;
     gap: 10px;
     margin-top: 15px;
+    animation: fadeInUp 0.6s ease 0.6s both;
 }
 
 .btn {
@@ -96,6 +100,8 @@ header h1 {
     -webkit-tap-highlight-color: transparent;
     width: 100%;
     min-height: 44px;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn:active {
@@ -125,10 +131,12 @@ header h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     touch-action: manipulation;
+    animation: fadeInUp 0.5s ease;
+    animation-fill-mode: both;
 }
 
 .student-card:active {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
 }
 
 .student-image {
@@ -157,6 +165,7 @@ header h1 {
     width: 24px;
     height: 24px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .search-section {
@@ -165,12 +174,14 @@ header h1 {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     margin-bottom: 15px;
+    animation: fadeInUp 0.6s ease 0.8s both;
 }
 
 .search-section h2 {
     color: #333;
     margin-bottom: 15px;
     font-size: 18px;
+    animation: fadeInLeft 0.5s ease 1s both;
 }
 
 .search-form {
@@ -178,6 +189,7 @@ header h1 {
     flex-direction: column;
     gap: 12px;
     margin-bottom: 15px;
+    animation: fadeInUp 0.6s ease 1.2s both;
 }
 
 .attendance-table {
@@ -185,6 +197,7 @@ header h1 {
     border-collapse: collapse;
     margin-top: 15px;
     font-size: 14px;
+    animation: fadeInUp 0.6s ease 1.4s both;
 }
 
 .attendance-table th,
@@ -208,6 +221,18 @@ header h1 {
     background: #f9f9f9;
 }
 
+.attendance-table tr {
+    animation: fadeInLeft 0.5s ease;
+    animation-fill-mode: both;
+}
+
+.attendance-table tr:nth-child(1) { animation-delay: 1.6s; }
+.attendance-table tr:nth-child(2) { animation-delay: 1.7s; }
+.attendance-table tr:nth-child(3) { animation-delay: 1.8s; }
+.attendance-table tr:nth-child(4) { animation-delay: 1.9s; }
+.attendance-table tr:nth-child(5) { animation-delay: 2.0s; }
+.attendance-table tr:nth-child(n+6) { animation-delay: 2.1s; }
+
 .percentage-table {
     margin-top: 15px;
     margin-bottom: 20px;
@@ -225,10 +250,17 @@ header h1 {
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
+    animation: fadeInUp 0.6s ease 1.6s both;
 }
 
 .export-btn {
     width: 100%;
+    transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .search-summary {
@@ -264,6 +296,7 @@ header h1 {
     text-align: center;
     max-width: 90%;
     width: auto;
+    animation: slideUp 0.3s ease;
 }
 
 /* Table scroll for mobile */
@@ -328,55 +361,231 @@ header h1 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    animation: fadeIn 0.5s ease;
 }
 
 .login-container {
     background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     width: 90%;
     max-width: 400px;
-    animation: slideUp 0.3s ease;
+    animation: slideUp 0.5s ease;
+    position: relative;
+    overflow: hidden;
+    transform-origin: center;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #1a73e8, #0d47a1);
+    animation: shimmer 2s infinite linear;
 }
 
 .login-container h2 {
     color: #1a73e8;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 24px;
+    gap: 12px;
+    font-size: 28px;
+    font-weight: 600;
+    animation: fadeInDown 0.6s ease 0.2s both;
+}
+
+.login-container h2 i {
+    font-size: 32px;
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite;
 }
 
 .login-container .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    animation: fadeInUp 0.6s ease 0.4s both;
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 15px;
+    font-weight: 500;
+    transform-origin: left;
+    animation: slideInLeft 0.5s ease 0.6s both;
 }
 
 .login-container input {
-    margin-bottom: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    animation: fadeInUp 0.6s ease 0.8s both;
+}
+
+.login-container input:focus {
+    border-color: #1a73e8;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    outline: none;
+    transform: translateY(-2px);
+    animation: pulse 1s ease;
+}
+
+.login-container .btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    animation: fadeInUp 0.6s ease 1s both;
+}
+
+.login-container .btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 5px 15px rgba(26, 115, 232, 0.3);
+}
+
+.login-container .btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.login-container .btn i {
+    font-size: 18px;
+    animation: bounce 1s infinite;
 }
 
 .error-message {
     color: #dc3545;
     font-size: 14px;
     display: block;
-    margin-top: 5px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fff5f5;
+    border-radius: 8px;
+    border-left: 4px solid #dc3545;
+    animation: shake 0.5s ease;
 }
 
-@keyframes slideUp {
+/* New Animation Keyframes */
+@keyframes fadeIn {
     from {
-        transform: translateY(20px);
         opacity: 0;
     }
     to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Enhanced slideUp animation */
+@keyframes slideUp {
+    from {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
         opacity: 1;
     }
 }
@@ -416,3 +625,156 @@ header h1 {
         margin-left: 20px;
     }
 } 
+
+/* New keyframes for additional animations */
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Student cards animations */
+.student-card:nth-child(1) { animation-delay: 0.1s; }
+.student-card:nth-child(2) { animation-delay: 0.2s; }
+.student-card:nth-child(3) { animation-delay: 0.3s; }
+.student-card:nth-child(4) { animation-delay: 0.4s; }
+.student-card:nth-child(5) { animation-delay: 0.5s; }
+.student-card:nth-child(n+6) { animation-delay: 0.6s; }
+
+.student-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Search section animations */
+.search-section h2 {
+    animation: fadeInLeft 0.5s ease 1s both;
+}
+
+.search-form {
+    animation: fadeInUp 0.6s ease 1.2s both;
+}
+
+/* Table animations */
+.attendance-table {
+    animation: fadeInUp 0.6s ease 1.4s both;
+}
+
+.attendance-table tr {
+    animation: fadeInLeft 0.5s ease;
+    animation-fill-mode: both;
+}
+
+.attendance-table tr:nth-child(1) { animation-delay: 1.6s; }
+.attendance-table tr:nth-child(2) { animation-delay: 1.7s; }
+.attendance-table tr:nth-child(3) { animation-delay: 1.8s; }
+.attendance-table tr:nth-child(4) { animation-delay: 1.9s; }
+.attendance-table tr:nth-child(5) { animation-delay: 2.0s; }
+.attendance-table tr:nth-child(n+6) { animation-delay: 2.1s; }
+
+/* Button hover animations */
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Add smooth transitions for all interactive elements */
+.student-card,
+.btn,
+.form-group input,
+.attendance-checkbox {
+    transition: all 0.3s ease;
+}
+
+/* Add loading animation for tables */
+.attendance-table.loading {
+    position: relative;
+}
+
+.attendance-table.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+}
+
+/* Add animation for checkbox */
+.attendance-checkbox:checked {
+    animation: checkmark 0.3s ease;
+}
+
+@keyframes checkmark {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Add animation for search results */
+#attendance-results {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Add animation for export buttons */
+.export-btn {
+    transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Add animation for period stats */
+.period-stats {
+    animation: fadeInUp 0.5s ease;
+    animation-fill-mode: both;
+}
+
+.period-stats:nth-child(1) { animation-delay: 0.1s; }
+.period-stats:nth-child(2) { animation-delay: 0.2s; }
+.period-stats:nth-child(3) { animation-delay: 0.3s; }
+.period-stats:nth-child(4) { animation-delay: 0.4s; }
+.period-stats:nth-child(5) { animation-delay: 0.5s; }
+.period-stats:nth-child(n+6) { animation-delay: 0.6s; } 
